@@ -7,43 +7,59 @@
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 bg-white border-b border-gray-200">
-                    <table class="table-auto w-full">
-                        <thead>
-                            <tr class="bg-gray-100">
-                                <th class="px-4 py-2">No</th>
-                                <th class="px-4 py-2">Pelanggan</th>
-                                <th class="px-4 py-2">Mobil</th>
-                                <th class="px-4 py-2">Tanggal Transaksi</th>
-                                <th class="px-4 py-2">Total</th>
-                                <th class="px-4 py-2">Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($transactions as $index => $transaction)
-                                <tr class="border-t">
-                                    <td class="px-4 py-2">{{ $index + 1 }}</td>
-                                    <td class="px-4 py-2">{{ $transaction->customer->name ?? '-' }}</td>
-                                    <td class="px-4 py-2">{{ $transaction->car->name ?? '-' }}</td>
-                                    <td class="px-4 py-2">{{ $transaction->transaction_date }}</td>
-                                    <td class="px-4 py-2">Rp{{ number_format($transaction->total, 0, ',', '.') }}</td>
-                                    <td class="px-4 py-2">
-                                        <a href="{{ route('transactions.edit', $transaction) }}" class="text-blue-500">Edit</a>
-                                        <form action="{{ route('transactions.destroy', $transaction) }}" method="POST" class="inline">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="text-red-500 ml-2" onclick="return confirm('Yakin ingin hapus transaksi ini?')">Hapus</button>
-                                        </form>
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
+            @if (session('success'))
+                <div class="mb-4 p-4 bg-green-100 border border-green-400 text-green-700 rounded">
+                    {{ session('success') }}
+                </div>
+            @endif
 
-                    @if ($transactions->isEmpty())
-                        <p class="mt-4 text-gray-500">Tidak ada data transaksi.</p>
-                    @endif
+            <div class="mb-4">
+                <a href="{{ route('transactions.create') }}"
+                   class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                    + Tambah Transaksi
+                </a>
+            </div>
+
+            <div class="bg-white shadow-sm rounded-lg p-6">
+                <table class="table-auto w-full">
+                    <thead class="bg-gray-100">
+                        <tr>
+                            <th class="px-4 py-2">No</th>
+                            <th class="px-4 py-2">Pelanggan</th>
+                            <th class="px-4 py-2">Mobil</th>
+                            <th class="px-4 py-2">Tanggal Transaksi</th>
+                            <th class="px-4 py-2">Total</th>
+                            <th class="px-4 py-2">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse ($transactions as $index => $transaction)
+                            <tr class="border-t">
+                                <td class="px-4 py-2">{{ $transactions->firstItem() + $index }}</td>
+                                <td class="px-4 py-2">{{ $transaction->customer->name }}</td>
+                                <td class="px-4 py-2">{{ $transaction->product->name }}</td>
+                                <td class="px-4 py-2">{{ $transaction->formatted_date }}</td>
+                                <td class="px-4 py-2">{{ $transaction->formatted_total }}</td>
+                                <td class="px-4 py-2">
+                                    <a href="{{ route('transactions.show', $transaction) }}" class="text-green-500 hover:text-green-700">Lihat</a>
+                                    <a href="{{ route('transactions.edit', $transaction) }}" class="text-blue-500 hover:text-blue-700 ml-2">Edit</a>
+                                    <form action="{{ route('transactions.destroy', $transaction) }}" method="POST" class="inline ml-2">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button onclick="return confirm('Yakin ingin menghapus transaksi ini?')" class="text-red-500 hover:text-red-700">Hapus</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="6" class="px-4 py-2 text-center text-gray-500">Tidak ada data transaksi.</td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+
+                <div class="mt-4">
+                    {{ $transactions->links() }}
                 </div>
             </div>
         </div>

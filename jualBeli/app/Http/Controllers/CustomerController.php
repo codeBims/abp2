@@ -52,6 +52,16 @@ class CustomerController extends Controller
         return view('customers.edit', compact('customer'));
     }
 
+    // Menampilkan detail pelanggan (Show)
+    public function show($id)
+    {
+        // Cari pelanggan berdasarkan ID
+        $customer = Customer::findOrFail($id);
+
+        // Return view untuk menampilkan detail pelanggan
+        return view('customers.show', compact('customer'));
+    }
+
     // Memperbarui data pelanggan di database (Update)
     public function update(Request $request, $id)
     {
@@ -86,4 +96,3 @@ class CustomerController extends Controller
         return redirect()->route('customers.index')->with('success', 'Pelanggan berhasil dihapus.');
     }
 }
-

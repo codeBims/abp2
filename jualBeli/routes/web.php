@@ -32,8 +32,8 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     Route::resource('products', ProductController::class)->except('show');
-    Route::resource('customers', CustomerController::class)->except('show');
-    Route::resource('transactions', TransactionController::class)->except('show');
+    Route::resource('customers', CustomerController::class);
+    Route::resource('transactions', TransactionController::class);
 });
 
 require __DIR__.'/auth.php';

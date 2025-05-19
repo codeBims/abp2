@@ -19,6 +19,15 @@ class TransactionController extends Controller
         return view('transactions.index', compact('transactions'));
     }
 
+    public function show(Transaction $transaction)
+    {
+        // Eager load relasi untuk menghindari N+1 query
+        $transaction->load(['customer', 'product']);
+        
+        return view('transactions.show', compact('transaction'));
+    }
+
+
     // Menampilkan form untuk membuat transaksi baru (Create)
     public function create()
     {

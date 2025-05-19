@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Tambah Transaksi Baru') }}
+            {{ __('Edit Transaksi') }}
         </h2>
     </x-slot>
 
@@ -18,15 +18,17 @@
                     </div>
                 @endif
 
-                <form action="{{ route('transactions.store') }}" method="POST">
+                <form action="{{ route('transactions.update', $transaction) }}" method="POST">
                     @csrf
+                    @method('PUT')
                     
                     <div class="mb-4">
                         <label class="block text-gray-700 mb-2">Pelanggan</label>
                         <select name="customer_id" class="w-full border rounded px-3 py-2" required>
                             <option value="">Pilih Pelanggan</option>
                             @foreach ($customers as $customer)
-                                <option value="{{ $customer->id }}" {{ old('customer_id') == $customer->id ? 'selected' : '' }}>
+                                <option value="{{ $customer->id }}" 
+                                    {{ $transaction->customer_id == $customer->id ? 'selected' : '' }}>
                                     {{ $customer->name }} - {{ $customer->phone }}
                                 </option>
                             @endforeach
@@ -38,7 +40,8 @@
                         <select name="product_id" class="w-full border rounded px-3 py-2" required>
                             <option value="">Pilih Produk</option>
                             @foreach ($products as $product)
-                                <option value="{{ $product->id }}" {{ old('product_id') == $product->id ? 'selected' : '' }}>
+                                <option value="{{ $product->id }}" 
+                                    {{ $transaction->product_id == $product->id ? 'selected' : '' }}>
                                     {{ $product->name }} - Rp{{ number_format($product->price, 0, ',', '.') }}
                                 </option>
                             @endforeach
@@ -47,19 +50,25 @@
 
                     <div class="mb-4">
                         <label class="block text-gray-700 mb-2">Tanggal Transaksi</label>
-                        <input type="date" name="transaction_date" value="{{ old('transaction_date', date('Y-m-d')) }}" 
+                        <input type="date" name="transaction_date" 
+                               value="{{ old('transaction_date', $transaction->transaction_date->format('Y-m-d')) }}" 
                                class="w-full border rounded px-3 py-2" required>
                     </div>
 
                     <div class="mb-4">
                         <label class="block text-gray-700 mb-2">Total Harga</label>
-                        <input type="number" name="total_price" value="{{ old('total_price') }}" 
+                        <input type="number" name="total_price" 
+                               value="{{ old('total_price', $transaction->total_price) }}" 
                                class="w-full border rounded px-3 py-2" required>
                     </div>
 
-                    <div class="flex items-center justify-end">
+                    <div class="flex items-center justify-end space-x-4">
+                        <a href="{{ route('transactions.index') }}" 
+                           class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
+                            Batal
+                        </a>
                         <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                            Simpan Transaksi
+                            Update Transaksi
                         </button>
                     </div>
                 </form>
